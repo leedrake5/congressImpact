@@ -3,6 +3,7 @@ library(RColorBrewer)
 library(scales)
 library(lattice)
 library(dplyr)
+library(ggplot2)
 
 # Leaflet bindings are a bit slow; for now we'll just sample to compensate
 set.seed(100)
@@ -66,8 +67,25 @@ function(input, output, session) {
       
       cor.test <- lm(zipsInBounds()[[colorBy]] ~ zipsInBounds()[[sizeBy]])
       
+      r2 <- summary(cor.test)$r.squared
+      intercept <- cor.test$coef[1]
+      slope <- cor.test$coef[2]
+      
 
-    print(xyplot(zipsInBounds()[[colorBy]] ~ zipsInBounds()[[sizeBy]], xlab=sizeBy, ylab=colorBy, type=c("p", "r")))
+#print(xyplot(zipsInBounds()[[colorBy]] ~ zipsInBounds()[[sizeBy]], xlab=sizeBy, ylab=colorBy, type=c("p", "r"), main=expression(paste("y ="*paste(slope)*"x + "*paste(intercept)*", r"^2*paste(r2)))))
+
+    temp.frame <- data.frame(zipsInBounds()[[sizeBy]], zipsInBounds()[[colorBy]])
+    colnames(temp.frame) <- c("x", "y")
+    
+    scatter <- ggplot(aes(x, y), data=temp.frame) +
+    geom_point(colour="blue") +
+    stat_smooth(method="lm") +
+    theme_light() +
+    scale_x_continuous(sizeBy) +
+    scale_y_continuous(colorBy) +
+     annotate("text", label=lm_eqn(cor.test), x=0, y=Inf, hjust=0, vjust=1, parse=TRUE) 
+    
+    scatter
   })
 
   # This observer is responsible for maintaining the circles and legend,
@@ -135,6 +153,24 @@ function(input, output, session) {
       showZipcodePopup(event$id, event$lat, event$lng)
     })
   })
+  
+  ####When zipcode is selected, show popup with city info
+  
+  observe({
+      leafletProxy("map") %>% clearPopups()
+      event <- as.numeric(paste(input$yourzipcode))
+      zipframe <- subset(zipcodes, zipcodes$zip_code==event)
+      
+      
+      
+      if (is.null(event))
+      return()
+      
+      isolate({
+          showZipcodePopup(event, zipframe$latitude, zipframe$longitude)
+      })
+  })
+
 
 
   ## Data Explorer ###########################################

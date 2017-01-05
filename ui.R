@@ -29,10 +29,17 @@ navbarPage("Congressional Impact", id="nav",
         draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
         width = 330, height = "auto",
 
-        h2("ZIP explorer"),
+        h2("Congressional Explorer"),
+
+        tags$hr(),
+
+
+        textInput("yourzipcode", "Zip Code", value="87108"),
+
+        tags$hr(),
 
         selectInput("color", "Color", vars, selected="college"),
-        selectInput("size", "Size", vars, selected = "adultpop"),
+        selectInput("size", "Size", vars, selected = "income"),
         conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
           # Only prompt for threshold when coloring or sizing by superzip
           numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
