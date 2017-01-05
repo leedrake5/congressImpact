@@ -26,6 +26,9 @@ allzips$longitude <- jitter(allzips$longitude)
 allzips$college <- allzips$college * 100
 allzips$unemployment <- allzips$Unemp..Rate * 100
 allzips$pubcov <- as.numeric(allzips$Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone)
+allzips$medicare <- as.numeric(allzips$Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone)
+allzips$va <- as.numeric(allzips$Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone)
+allzips$medicaidexpansion <- as.numeric(allzips$Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold)
 allzips$zipcode <- formatC(allzips$zipcode, width=5, format="d", flag="0")
 #row.names(allzips) <- allzips$zipcode
 

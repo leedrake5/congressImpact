@@ -8,6 +8,9 @@ vars <- c(
   "Median income" = "income",
   "Unemployment Rate" = "unemployment",
   "Public Coverage " = "pubcov",
+  "Medicare Coverage " = "medicare",
+  "Medicaid ACA Coverage " = "medicaidexpansion",
+  "VA Coverage " = "va",
   "Population" = "adultpop"
 )
 
