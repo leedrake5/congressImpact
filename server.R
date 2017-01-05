@@ -5,14 +5,33 @@ library(lattice)
 library(dplyr)
 library(ggplot2)
 
-# Leaflet bindings are a bit slow; for now we'll just sample to compensate
-set.seed(100)
-zipdata <- allzips[sample.int(nrow(allzips), 10000),]
-# By ordering by centile, we ensure that the (comparatively rare) SuperZIPs
-# will be drawn last and thus be easier to see
-zipdata <- zipdata[order(zipdata$centile),]
-
 function(input, output, session) {
+    
+    
+    # Leaflet bindings are a bit slow; for now we'll just sample to compensate
+    set.seed(100)
+    
+    
+    zipdataInput <- reactive({
+    if(input$fullmodel == FALSE) {
+        hold <- allzips[sample.int(nrow(allzips), 10000),]
+    } else if(input$fullmodel == TRUE) {
+        hold <- allzips
+    }
+    
+    hold
+    
+    })
+    
+    
+    # By ordering by centile, we ensure that the (comparatively rare) SuperZIPs
+    # will be drawn last and thus be easier to see
+    zipdataToo <- reactive(
+    {zipdata <- zipdataInput()
+    zipdata[order(zipdata$centile),]
+    })
+    
+
 
   ## Interactive Map ###########################################
 
@@ -29,6 +48,7 @@ function(input, output, session) {
   # A reactive expression that returns the set of zips that are
   # in bounds right now
   zipsInBounds <- reactive({
+      zipdata <- zipdataToo()
     if (is.null(input$map_bounds))
       return(zipdata[FALSE,])
     bounds <- input$map_bounds
@@ -91,6 +111,7 @@ function(input, output, session) {
   # This observer is responsible for maintaining the circles and legend,
   # according to the variables the user has chosen to map to color and size.
   observe({
+     zipdata <- zipdataToo()
     colorBy <- input$color
     sizeBy <- input$size
 

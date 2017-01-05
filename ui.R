@@ -7,6 +7,7 @@ vars <- c(
   "College education" = "college",
   "Median income" = "income",
   "Unemployment Rate" = "unemployment",
+  "Public Coverage " = "pubcov",
   "Population" = "adultpop"
 )
 
@@ -30,6 +31,8 @@ navbarPage("Congressional Impact", id="nav",
         width = 330, height = "auto",
 
         h2("Congressional Explorer"),
+
+        checkboxInput("fullmodel", "Full", value=FALSE),
 
         tags$hr(),
 

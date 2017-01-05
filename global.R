@@ -25,6 +25,7 @@ allzips$latitude <- jitter(allzips$latitude)
 allzips$longitude <- jitter(allzips$longitude)
 allzips$college <- allzips$college * 100
 allzips$unemployment <- allzips$Unemp..Rate * 100
+allzips$pubcov <- as.numeric(allzips$Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone)
 allzips$zipcode <- formatC(allzips$zipcode, width=5, format="d", flag="0")
 #row.names(allzips) <- allzips$zipcode
 
