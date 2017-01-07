@@ -195,10 +195,49 @@ function(input, output, session) {
 
 
   ## Data Explorer ###########################################
+  
+  reactiveZip <- reactive({
+      
+      smalls <- zipsInBounds()
+      
+      smalls$latitude <- jitter(smalls$latitude)
+      smalls$longitude <- jitter(smalls$longitude)
+      smalls$college <- smalls$college * 100
+      smalls$unemployment <- smalls$Unemp..Rate * 100
+      smalls$pubcov <- smalls$Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone
+      smalls$medicare <- smalls$Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone
+      smalls$va <- smalls$Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone
+      smalls$medicaidexpansion <- smalls$Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold
+      smalls$zipcode <- smalls$zipcode
+      
+      
+      zoomtable <- smalls %>%
+      select(
+      City = city.x,
+      State = state.x,
+      Zipcode = zipcode,
+      Rank = rank,
+      Score = centile,
+      Superzip = superzip,
+      Population = adultpop,
+      College = college,
+      unemployment = Unemp..Rate,
+      Income = income,
+      Lat = latitude,
+      Long = longitude
+      )
+      
+      zoomtable
+      
+  })
+
 
   observe({
+      
+      
+      
     cities <- if (is.null(input$states)) character(0) else {
-      filter(cleantable, State %in% input$states) %>%
+      filter(reactiveZip(), State %in% input$states) %>%
         `$`('City') %>%
         unique() %>%
         sort()
@@ -210,7 +249,7 @@ function(input, output, session) {
 
   observe({
     zipcodes <- if (is.null(input$states)) character(0) else {
-      cleantable %>%
+      reactiveZip() %>%
         filter(State %in% input$states,
           is.null(input$cities) | City %in% input$cities) %>%
         `$`('Zipcode') %>%
@@ -235,10 +274,14 @@ function(input, output, session) {
       showZipcodePopup(zip, lat, lng)
       map %>% fitBounds(lng - dist, lat - dist, lng + dist, lat + dist)
     })
+    
+    
   })
 
   output$ziptable <- DT::renderDataTable({
-    df <- cleantable %>%
+      
+      
+    df <- reactiveZip() %>%
       filter(
         Score >= input$minScore,
         Score <= input$maxScore,
@@ -251,4 +294,215 @@ function(input, output, session) {
 
     DT::datatable(df, options = list(ajax = list(url = action)), escape = FALSE)
   })
+  
+  
+  
+  output$congresstable <- DT::renderDataTable({
+      
+      superzipInBounds <- zipsInBounds()
+      superzipInBounds.dt <- data.table(superzipInBounds)
+      
+      
+      superZipInBoundsCollapse <- superzipInBounds.dt[,
+      list(zipcode=rank[1],
+      number=rank[1],
+      X=rank[1],
+      centile=mean(as.numeric(as.vector(centile))),
+      superzip=mean(as.numeric(as.vector(superzip))),
+      rank=mean(as.numeric(as.vector(rank))),
+      city=rank[1],
+      adultpop=sum(as.numeric(as.vector(adultpop))),
+      households=sum(as.numeric(as.vector(households))),
+      college=mean(as.numeric(as.vector(college))),
+      income=mean(as.numeric(as.vector(income))),
+      State=rank[1],
+      state.x=rank[1],
+      Congressional.District=rank[1],
+      Unemp..Rate=mean(as.numeric(as.vector(Unemp..Rate))),
+      X..in.sample=sum(as.numeric(as.vector(X..in.sample))),
+            Total..Estimate..Civilian.noninstitutionalized.population=sum(as.numeric(as.vector(Total..Estimate..Civilian.noninstitutionalized.population))),
+      Total..Margin.of.Error..Civilian.noninstitutionalized.population=sum(as.numeric(as.vector(Total..Margin.of.Error..Civilian.noninstitutionalized.population))),
+      Public.Coverage..Estimate..Civilian.noninstitutionalized.population=sum(as.numeric(as.vector(Public.Coverage..Estimate..Civilian.noninstitutionalized.population))),
+      Public.Coverage..Margin.of.Error..Civilian.noninstitutionalized.population=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..Civilian.noninstitutionalized.population))),
+      Percent.Public.Coverage..Estimate..Civilian.noninstitutionalized.population=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..Civilian.noninstitutionalized.population))),
+      Percent.Public.Coverage..Margin.of.Error..Civilian.noninstitutionalized.population=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..Civilian.noninstitutionalized.population))),
+      Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone=sum(as.numeric(as.vector(Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone))),
+      Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone))),
+      Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone=sum(as.numeric(as.vector(Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone))),
+      Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone=sum(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone))),
+      Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone))),
+      Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone))),
+      Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone=sum(as.numeric(as.vector(Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone))),
+      Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone=sum(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicare.coverage.alone))),
+      Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone))),
+      Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone))),
+      Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone))),
+      Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...Medicaid.means.tested.coverage.alone))),
+      Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone))),
+      Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone))),
+      Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone))),
+      Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..COVERAGE.ALONE...Public.health.insurance.alone...VA.health.care.coverage.alone))),
+      Total..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Total..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Total..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Total..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))),
+      Total..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Total..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Total..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Total..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...At.or.above.138.percent.of.the.poverty.threshold))),
+      Total..Estimate..Worked.full.time..year.round..18.years.and.over.=sum(as.numeric(as.vector(Total..Estimate..Worked.full.time..year.round..18.years.and.over.))),
+      Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.=sum(as.numeric(as.vector(Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.))),
+      Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over.=sum(as.numeric(as.vector(Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over.))),
+      Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.))),
+      Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over.=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over.))),
+      Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over.))),
+      Total..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years=sum(as.numeric(as.vector(Total..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years=sum(as.numeric(as.vector(Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....18.to.64.years))),
+      Total..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over=sum(as.numeric(as.vector(Total..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over=sum(as.numeric(as.vector(Total..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..Worked.full.time..year.round..18.years.and.over....65.years.and.over))),
+      Total..Estimate..Under.6=sum(as.numeric(as.vector(Total..Estimate..Under.6))),
+      Total..Margin.of.Error..Under.6=sum(as.numeric(as.vector(Total..Margin.of.Error..Under.6))),
+      Public.Coverage..Estimate..Under.6=sum(as.numeric(as.vector(Public.Coverage..Estimate..Under.6))),
+      Public.Coverage..Margin.of.Error..Under.6=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..Under.6))),
+      Percent.Public.Coverage..Estimate..Under.6=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..Under.6))),
+      Percent.Public.Coverage..Margin.of.Error..Under.6=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..Under.6))),
+      Total..Estimate..6.to.17.years=sum(as.numeric(as.vector(Total..Estimate..6.to.17.years))),
+      Total..Margin.of.Error..6.to.17.years=sum(as.numeric(as.vector(Total..Margin.of.Error..6.to.17.years))),
+      Public.Coverage..Estimate..6.to.17.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..6.to.17.years))),
+      Public.Coverage..Margin.of.Error..6.to.17.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..6.to.17.years))),
+      Percent.Public.Coverage..Estimate..6.to.17.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..6.to.17.years))),
+      Percent.Public.Coverage..Margin.of.Error..6.to.17.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..6.to.17.years))),
+      Total..Estimate..18.to.24.years=sum(as.numeric(as.vector(Total..Estimate..18.to.24.years))),
+      Total..Margin.of.Error..18.to.24.years=sum(as.numeric(as.vector(Total..Margin.of.Error..18.to.24.years))),
+      Public.Coverage..Estimate..18.to.24.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..18.to.24.years))),
+      Public.Coverage..Margin.of.Error..18.to.24.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..18.to.24.years))),
+      Percent.Public.Coverage..Estimate..18.to.24.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..18.to.24.years))),
+      Percent.Public.Coverage..Margin.of.Error..18.to.24.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..18.to.24.years))),
+      Total..Estimate..25.to.34.years=sum(as.numeric(as.vector(Total..Estimate..25.to.34.years))),
+      Total..Margin.of.Error..25.to.34.years=sum(as.numeric(as.vector(Total..Margin.of.Error..25.to.34.years))),
+      Public.Coverage..Estimate..25.to.34.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..25.to.34.years))),
+      Public.Coverage..Margin.of.Error..25.to.34.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..25.to.34.years))),
+      Percent.Public.Coverage..Estimate..25.to.34.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..25.to.34.years))),
+      Percent.Public.Coverage..Margin.of.Error..25.to.34.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..25.to.34.years))),
+      Total..Estimate..35.to.44.years=sum(as.numeric(as.vector(Total..Estimate..35.to.44.years))),
+      Total..Margin.of.Error..35.to.44.years=sum(as.numeric(as.vector(Total..Margin.of.Error..35.to.44.years))),
+      Public.Coverage..Estimate..35.to.44.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..35.to.44.years))),
+      Public.Coverage..Margin.of.Error..35.to.44.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..35.to.44.years))),
+      Percent.Public.Coverage..Estimate..35.to.44.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..35.to.44.years))),
+      Percent.Public.Coverage..Margin.of.Error..35.to.44.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..35.to.44.years))),
+      Total..Estimate..45.to.54.years=sum(as.numeric(as.vector(Total..Estimate..45.to.54.years))),
+      Total..Margin.of.Error..45.to.54.years=sum(as.numeric(as.vector(Total..Margin.of.Error..45.to.54.years))),
+      Public.Coverage..Estimate..45.to.54.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..45.to.54.years))),
+      Public.Coverage..Margin.of.Error..45.to.54.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..45.to.54.years))),
+      Percent.Public.Coverage..Estimate..45.to.54.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..45.to.54.years))),
+      Percent.Public.Coverage..Margin.of.Error..45.to.54.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..45.to.54.years))),
+      Total..Estimate..55.to.64.years=sum(as.numeric(as.vector(Total..Estimate..55.to.64.years))),
+      Total..Margin.of.Error..55.to.64.years=sum(as.numeric(as.vector(Total..Margin.of.Error..55.to.64.years))),
+      Public.Coverage..Estimate..55.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..55.to.64.years))),
+      Public.Coverage..Margin.of.Error..55.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..55.to.64.years))),
+      Percent.Public.Coverage..Estimate..55.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..55.to.64.years))),
+      Percent.Public.Coverage..Margin.of.Error..55.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..55.to.64.years))),
+      Total..Estimate..65.to.74.years=sum(as.numeric(as.vector(Total..Estimate..65.to.74.years))),
+      Total..Margin.of.Error..65.to.74.years=sum(as.numeric(as.vector(Total..Margin.of.Error..65.to.74.years))),
+      Public.Coverage..Estimate..65.to.74.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..65.to.74.years))),
+      Public.Coverage..Margin.of.Error..65.to.74.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..65.to.74.years))),
+      Percent.Public.Coverage..Estimate..65.to.74.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..65.to.74.years))),
+      Percent.Public.Coverage..Margin.of.Error..65.to.74.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..65.to.74.years))),
+      Total..Estimate..75.years.and.over=sum(as.numeric(as.vector(Total..Estimate..75.years.and.over))),
+      Total..Margin.of.Error..75.years.and.over=sum(as.numeric(as.vector(Total..Margin.of.Error..75.years.and.over))),
+      Public.Coverage..Estimate..75.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Estimate..75.years.and.over))),
+      Public.Coverage..Margin.of.Error..75.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..75.years.and.over))),
+      Percent.Public.Coverage..Estimate..75.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..75.years.and.over))),
+      Percent.Public.Coverage..Margin.of.Error..75.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..75.years.and.over))),
+      Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..MEDICAID.MEANS.TESTED.PUBLIC.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...Under.18))),
+      Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...18.to.64.years))),
+      Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Total..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(as.numeric(as.vector(Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over)))), by= list(districtcode, representative, firstname, middlename, lastname, party, phone, website, congress_office, bioguide_id, votesmart_id, fec_id, govtrack_id, crp_id, twitter_id, congresspedia_url, facebook_id, oc_email)]
+      
+      
+      cleantable <- superZipInBoundsCollapse %>%
+      select(
+      District = districtcode,
+      Representative = representative,
+      Phone = phone,
+      Email= oc_email,
+      Website = website,
+      Rank = rank,
+      Score = centile,
+      Superzip = superzip,
+      Population = adultpop,
+      College = college,
+      unemployment = Unemp..Rate,
+      Income = income,
+      Medicaid = Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold
+      )
+
+      
+      df <- cleantable
+      DT::datatable(df)
+  })
+  
+  
 }

@@ -89,5 +89,36 @@ navbarPage("Congressional Impact", id="nav",
     DT::dataTableOutput("ziptable")
   ),
 
+tabPanel("Congressional Explorer",
+fluidRow(
+column(3,
+selectInput("states", "States", c("All states"="", structure(state.abb, names=state.name), "Washington, DC"="DC"), multiple=TRUE)
+),
+column(3,
+conditionalPanel("input.states",
+selectInput("cities", "Cities", c("All cities"=""), multiple=TRUE)
+)
+),
+column(3,
+conditionalPanel("input.states",
+selectInput("districtcodes", "District", c("All Districts"=""), multiple=TRUE)
+)
+)
+),
+fluidRow(
+column(1,
+numericInput("minScore", "Min score", min=0, max=100, value=0)
+),
+column(1,
+numericInput("maxScore", "Max score", min=0, max=100, value=100)
+)
+),
+hr(),
+DT::dataTableOutput("congresstable")
+),
+
+
+
+
   conditionalPanel("false", icon("crosshair"))
 )
