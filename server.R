@@ -86,7 +86,7 @@ function(input, output, session) {
       colorBy <- input$color
       sizeBy <- input$size
       
-      cor.test <- lm(zipsInBounds()[[colorBy]] ~ zipsInBounds()[[sizeBy]])
+      cor.test <- lm(as.numeric(as.vector(zipsInBounds()[[colorBy]])) ~ as.numeric(as.vector(zipsInBounds()[[sizeBy]])))
       
       r2 <- summary(cor.test)$r.squared
       intercept <- cor.test$coef[1]
@@ -95,7 +95,7 @@ function(input, output, session) {
 
 #print(xyplot(zipsInBounds()[[colorBy]] ~ zipsInBounds()[[sizeBy]], xlab=sizeBy, ylab=colorBy, type=c("p", "r"), main=expression(paste("y ="*paste(slope)*"x + "*paste(intercept)*", r"^2*paste(r2)))))
 
-    temp.frame <- data.frame(zipsInBounds()[[sizeBy]], zipsInBounds()[[colorBy]])
+    temp.frame <- data.frame(as.numeric(as.vector(zipsInBounds()[[sizeBy]])), as.numeric(as.vector(zipsInBounds()[[colorBy]])))
     colnames(temp.frame) <- c("x", "y")
     
     scatter <- ggplot(aes(x, y), data=temp.frame) +
