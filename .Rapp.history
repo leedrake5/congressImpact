@@ -1,0 +1,103 @@
+district.map@data = data.frame(district.map@data, df[match(district.map@data[,"districtcode"], as.data.frame(superCollapse[,"districtcode"])),])
+superzip.simp <- as.data.frame(superCollapse)
+is.data.frame(superzip.sim)
+is.data.frame(superzip.simp)
+district.map@data = data.frame(district.map@data, df[match(district.map@data[,"districtcode"], superzip.simp[,"districtcode"])),])
+ls(superzip.simp)
+district.map@data = data.frame(district.map@data, df[match(district.map@data[,"districtcode"], superzip.simp[,"districtcode"]),])
+district.map@data = data.frame(district.map@data, superzip.simp[match(district.map@data[,"districtcode"], superzip.simp[,"districtcode"]),])
+head(district.map@data)
+str(district.map)
+district.map <- CRS("+proj=longlat +datum=WGS84"+towgs84=0,0,0)
+district.map <- CRS("+proj=longlat +datum=WGS84")
+setwd("/Users/lee/GitHub/congressImpact/")#
+district.map <- readOGR(dsn=path.expand("/Users/lee/GitHub/congressImpact/districts114"), layer="districts114")#
+#
+district.map@data$districtcode <- districtsforshp$district.code#
+district.map@data = data.frame(district.map@data, superzip.simp[match(district.map@data[,"districtcode"], superzip.simp[,"districtcode"]),])
+ggmap(US)
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.map,  aes(long, lat, group=group, fill=party, map_id=party), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+ls(superzip)
+ls(district.map@data)
+district.fortify <- fortify(district.map, by="districtcode")
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.fortify,  aes(long, lat, group=group, fill=party, map_id=party), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.fortify,  aes(long, lat, group=group, fill=party, map_id=districtcode), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+ls(district.fortify)
+head(district.fortify)
+plot(district.fortify)
+plot(district.map)
+ls(district.map)
+summary(district.map)
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.map,  aes(long, lat, group=ID, fill=party, map_id=districtcode), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.map,  aes(long, lat, group=id, fill=party, map_id=districtcode), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.map,  aes(long, lat, group=id, map_id=districtcode), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+test.plot <- ggmap(US) +#
+geom_polygon(data=district.map,  aes(long, lat, group=id), alpha=0.5) +#
+geom_path(colour="white") +#
+scale_x_continuous("Longitude", limits=c(-125, -60)) +#
+scale_y_continuous("Latitude", limits=c(20, 50)) +#
+coord_equal() +#
+coord_map() +#
+scale_fill_discrete("Generalized Districts") +#
+theme_classic()
+test.plot
+deployApp("~/GitHub/congressImpact", appName="congressImpact")
+deployApp("~/Desktop/aes-app", appName="aes_app")
+runApp("~/Desktop/aes-app")
+deployApp("~/Desktop/aes-app", appName="aes_app")
+?plotOutput
+deployApp("~/Desktop/aes-app", appName="aes_app")

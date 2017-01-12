@@ -44,8 +44,8 @@ navbarPage("Congressional Impact", id="nav",
 
         tags$hr(),
 
-        selectInput("color", "Color", vars, selected="college"),
-        selectInput("size", "Size", vars, selected = "income"),
+        selectInput("color", "Color", vars, selected="medicaidexpansion"),
+        selectInput("size", "Size", vars, selected = "adultpop"),
         conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
           # Only prompt for threshold when coloring or sizing by superzip
           numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
@@ -116,6 +116,9 @@ numericInput("maxScore", "Max score", min=0, max=100, value=100)
 hr(),
 DT::dataTableOutput("congresstable")
 ),
+
+
+
 
 
 
