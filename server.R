@@ -297,8 +297,7 @@ function(input, output, session) {
   })
   
   
-  
-  output$congresstable <- DT::renderDataTable({
+  congressTable <- reactive({
       
       superzipInBounds <- zipsInBounds()
       superzipInBounds.dt <- data.table(superzipInBounds)
@@ -481,17 +480,27 @@ function(input, output, session) {
       Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(na.rm=TRUE, as.numeric(as.vector(Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
       Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=sum(na.rm=TRUE, as.numeric(as.vector(Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
       Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(na.rm=TRUE, as.numeric(as.vector(Percent.Public.Coverage..Estimate..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
-      Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(na.rm=TRUE, as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over)))), by= list(districtcode, representative, firstname, middlename, lastname, party, phone, website, congress_office, bioguide_id, votesmart_id, fec_id, govtrack_id, crp_id, twitter_id, congresspedia_url, facebook_id, oc_email)]
-
+      Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over=mean(na.rm=TRUE, as.numeric(as.vector(Percent.Public.Coverage..Margin.of.Error..VA.HEALTH.CARE.COVERAGE.ALONE.OR.IN.COMBINATION...65.years.and.over))),
+      medicaid.expansion.percent = mean(na.rm=TRUE, as.numeric(as.vector(Total..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold))/as.numeric(as.vector(Total..Estimate..Civilian.noninstitutionalized.population))),
+      public.coverage.percent <- mean(na.rm=TRUE, as.numeric(as.vector(Public.Coverage..Estimate..COVERAGE.ALONE...Public.health.insurance.alone)))/as.numeric(as.vector(Total..Estimate..Civilian.noninstitutionalized.population))
+      
+      ), by= list(districtcode, representative, firstname, middlename, lastname, party, phone, website, congress_office, bioguide_id, votesmart_id, fec_id, govtrack_id, crp_id, twitter_id, congresspedia_url, facebook_id, oc_email)]
+      
+      
+      
+      
+      
       
       
       cleantable <- superZipInBoundsCollapse %>%
       select(
       District = districtcode,
       Representative = representative,
+      Party=party,
       Phone = phone,
       Email= oc_email,
       Website = website,
+      twitter = twitter_id,
       Rank = rank,
       Score = centile,
       Superzip = superzip,
@@ -499,14 +508,34 @@ function(input, output, session) {
       College = college,
       unemployment = Unemp..Rate,
       Income = income,
-      Medicaid = Percent.Public.Coverage..Estimate..PUBLIC.HEALTH.INSURANCE.ALONE.OR.IN.COMBINATION...Below.138.percent.of.the.poverty.threshold
+      Medicaid = medicaid.expansion.percent
       )
-
       
-      df <- cleantable
       
-      DT::datatable(df)
+      df <- unique(cleantable)
+      
+      
   })
+  
+
+  
+  
+  output$congresstable <- DT::renderDataTable({
+      
+      df <- congressTable()
+      DT::datatable(df)
+
+
+  })
+  
+  output$downloadcongresstable <- downloadHandler(
+  filename = function() { paste("congress", '.csv', sep=',') },
+  content = function(file
+  ) {
+      write.csv(congressTable(), file)
+  }
+  )
+  
   
   
 }

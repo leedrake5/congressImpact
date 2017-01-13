@@ -111,7 +111,9 @@ numericInput("minScore", "Min score", min=0, max=100, value=0)
 ),
 column(1,
 numericInput("maxScore", "Max score", min=0, max=100, value=100)
-)
+),
+column(1,
+downloadButton(outputId="downloadcongresstable", label="Download"))
 ),
 hr(),
 DT::dataTableOutput("congresstable")
