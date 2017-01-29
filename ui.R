@@ -7,10 +7,16 @@ vars <- c(
   "College education" = "college",
   "Median income" = "income",
   "Unemployment Rate" = "unemployment",
-  "Public Coverage " = "pubcov",
-  "Medicare Coverage " = "medicare",
-  "Medicaid ACA Coverage " = "medicaidexpansion",
-  "VA Coverage " = "va",
+  "Public Coverage" = "pubcov",
+  "Medicare Coverage" = "medicare",
+  "Medicaid ACA Coverage" = "medicaidexpansion",
+  "VA Coverage" = "va",
+  "White %" = "X2010.White",
+  "Hispanic %" = "X2010.Hispanic",
+  "Black %" = "X2010.Black",
+  "Asian %" = "X2010.Asian",
+  "Native American %" = "X2010.Native",
+  "Trump Voter %" = "X2016.President.Trump.percent",
   "Population" = "adultpop"
 )
 

@@ -97,6 +97,7 @@ function(input, output, session) {
 
     temp.frame <- data.frame(as.numeric(as.vector(zipsInBounds()[[sizeBy]])), as.numeric(as.vector(zipsInBounds()[[colorBy]])))
     colnames(temp.frame) <- c("x", "y")
+    temp.frame <- na.omit(temp.frame)
     
     scatter <- ggplot(aes(x, y), data=temp.frame) +
     geom_point(colour="blue") +
