@@ -33,7 +33,7 @@ allzips <- merge(x=allzips, y=congresselections, by.x="districtcode", by.y="dist
 
 
 
-
+allzips$representative <- paste(allzips$firstname, allzips$lastname, sep=" ")
 allzips$latitude <- jitter(allzips$latitude)
 allzips$longitude <- jitter(allzips$longitude)
 allzips$college <- allzips$college * 100

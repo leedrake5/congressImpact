@@ -148,7 +148,7 @@ function(input, output, session) {
     content <- as.character(tagList(
       tags$h4("Score:", as.integer(selectedZip$centile)),
       tags$strong(HTML(sprintf("%s, %s %s",
-        selectedZip$city.x, selectedZip$state.x, selectedZip$zipcode
+        selectedZip$city.x, selectedZip$state, selectedZip$zipcode
       ))), tags$br(),
       sprintf("Median household income: %s", dollar(selectedZip$income * 1000)), tags$br(),
       sprintf("Percent of adults with BA: %s%%", as.integer(selectedZip$college)), tags$br(),
@@ -216,7 +216,7 @@ function(input, output, session) {
       zoomtable <- smalls %>%
       select(
       City = city.x,
-      State = state.x,
+      State = state,
       Zipcode = zipcode,
       Rank = rank,
       Score = centile,
@@ -318,7 +318,7 @@ function(input, output, session) {
       college=mean(na.rm=TRUE, as.numeric(as.vector(college))),
       income=mean(na.rm=TRUE, as.numeric(as.vector(income))),
       State=rank[1],
-      state.x=rank[1],
+      state=rank[1],
       Congressional.District=rank[1],
       Unemp..Rate=mean(na.rm=TRUE, as.numeric(as.vector(Unemp..Rate))),
       X..in.sample=sum(na.rm=TRUE, as.numeric(as.vector(X..in.sample))),
