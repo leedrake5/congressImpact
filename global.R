@@ -21,7 +21,8 @@ healthcaredata <- read.csv(file="data/Healthcare.csv")
 cities <- read.csv(file="data/Municipalities.csv")
 unemployment <- read.csv(file="data/Unemployment.csv")
 congresscontact <- read.csv(file="data/CongressionalContact.csv")
-congresselections <- read.csv(file="/Users/lee/GitHub/congressImpact/data/CongressElections.csv")
+congresselections <- read.csv(file="data/CongressElections.csv")
+
 
 allzips <- merge(x=superzip, y=zipcodes, by.x="zipcode", by.y="zip_code")
 allzips <- merge(x=allzips, y=unemployment, by.x="zipcode", by.y="Zip")
