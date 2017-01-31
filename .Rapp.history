@@ -1,3 +1,147 @@
+human.data <- data.frame(human.data$ageGrid, human.data$Lat, human.data$Long, human.data$densities, human.data$DensityScale, human.data$point)
+colnames(human.data) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")
+head(human.data)
+blank.ageGrid <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)#
+        blank.lat <- c(70.5,58.31,50.58,40.2,26.8,27.13,34.95,47.78,71.3,42.6)#
+        blank.long <- c(-159, -154.64,-125.25,-124,-98,-81,-76.7,-54.33,-76.44,-100)#
+        blank.densities <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)#
+        blank.point <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)#
+        blank.human.frame <- data.frame(blank.ageGrid, blank.lat, blank.long, blank.densities, blank.densities, blank.point)#
+        colnames(blank.human.frame) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")#
+        human.data <- rbind(human.data, blank.human.frame)
+data.int <- heat.function.mean(human.data, x.res=x.res, y.res=y.res)
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_y_continuous("Latitude", limits = c(25, 73)) +#
+        scale_x_continuous("Longitude", limits = c(-165, -60), breaks=seq(-165, -60, 30)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+human.int <- heat.function.mean(human.data, x.res=x.res, y.res=y.res)
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_y_continuous("Latitude", limits = c(25, 73)) +#
+        scale_x_continuous("Longitude", limits = c(-165, -60), breaks=seq(-165, -60, 30)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+quartz()
+val.human.plot
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_x_continuous("Longitude") +#
+        scale_y_continuous("Latitude") +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+quartz()
+val.human.plot
+ggmap(spain)
+quartz()
+ggmap(spain)
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_x_continuous("Longitude", limits=c(-10, 4)) +#
+        scale_y_continuous("Latitude", limits=c(35, 45)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+val.human.plot
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_x_continuous("Longitude", limits=c(-10, 2)) +#
+        scale_y_continuous("Latitude", limits=c(35, 45)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+val.human.plot
+blank.ageGrid <- c(0, 0, 0, 0)#
+        blank.lat <- c(-10, -10, 2.5, 2.5)#
+        blank.long <- c(45, 35, 35, 45)#
+        blank.densities <- c(0, 0, 0, 0)#
+        blank.point <- c(0, 0, 0, 0, 0)#
+        blank.human.frame <- data.frame(blank.ageGrid, blank.lat, blank.long, blank.densities, blank.densities, blank.point)#
+        colnames(blank.human.frame) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")#
+        human.data <- rbind(human.data, blank.human.frame)
+blank.ageGrid <- c(0, 0, 0, 0)#
+        blank.lat <- c(-10, -10, 2.5, 2.5)#
+        blank.long <- c(45, 35, 35, 45)#
+        blank.densities <- c(0, 0, 0, 0)#
+        blank.point <- c(0, 0, 0, 0, 0)
+blank.ageGrid <- c(0, 0, 0, 0)#
+        blank.lat <- c(-10, -10, 2.5, 2.5)#
+        blank.long <- c(45, 35, 35, 45)#
+        blank.densities <- c(0, 0, 0, 0)#
+        blank.point <- c(0, 0, 0, 0)#
+        blank.human.frame <- data.frame(blank.ageGrid, blank.lat, blank.long, blank.densities, blank.densities, blank.point)#
+        colnames(blank.human.frame) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")#
+        human.data <- rbind(human.data, blank.human.frame)
+human.int <- heat.function.mean(human.data, x.res=x.res, y.res=y.res)
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_x_continuous("Longitude", limits=c(-10, 4)) +#
+        scale_y_continuous("Latitude", limits=c(35, 45)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+val.human.plot
+human.data <- date.list[[200]]#
+        human.data <- data.frame(human.data$ageGrid, human.data$Lat, human.data$Long, human.data$densities, human.data$DensityScale, human.data$point)#
+        colnames(human.data) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")#
+        blank.ageGrid <- c(0, 0, 0, 0)#
+        blank.lat <- c(-10, -10, 2.5, 2.5)#
+        blank.long <- c(45, 35, 35, 45)#
+        blank.densities <- c(0, 0, 0, 0)#
+        blank.point <- c(0, 0, 0, 0)#
+        blank.human.frame <- data.frame(blank.ageGrid, blank.lat, blank.long, blank.densities, blank.densities, blank.point)#
+        colnames(blank.human.frame) <- c("ageGrid", "Lat", "Long", "densities", "DensityScale",  "point")#
+        human.data <- rbind(human.data, blank.human.frame)#
+        human.int <- heat.function.mean(human.data, x.res=x.res, y.res=y.res)
+val.human.plot <- ggmap(map) +#
+        geom_contour(data=human.int, aes(x=x, y=y, z=z), colour="red", alpha=0.2, binwidth=0.001)+#
+        geom_tile(data=human.int, aes(x=x, y=y, fill=z,  alpha=z))+#
+        coord_equal() +#
+        coord_map() +#
+        scale_alpha_continuous(range=c(0, 1), guide="none") +#
+        scale_fill_gradient(name = "Latest Date", low="pink", high="red",  limits=c(0, 1)) +#
+        scale_x_continuous("Longitude", limits=c(-10, 4)) +#
+        scale_y_continuous("Latitude", limits=c(35, 45)) +#
+        theme_tufte() +#
+        ggtitle(paste(date.interval[200], " cal BP | Humans", sep="")) +#
+        guides(size=FALSE, alpha=FALSE, shape=FALSE, fill=FALSE)
+val.human.plot
+head(human.int)
+tail(human.int)
 heat.function.mean <- function(data.frame, x.res, y.res) {#
         data.frame <- data.frame[complete.cases(data.frame),]#
         data.frame.int <- with(data.frame, interp(x=Long, y=Lat, z=DensityScale, duplicate="user", dupfun="mean", nx=x.res, ny=y.res))#
@@ -3640,107 +3784,40 @@ write.table(test.merge, file="total.csv", sep=',')
 runApp("~/GitHub/congressImpact")
 library(rsconnect)
 deployApp("~/GitHub/congressImpact", appName="congressImpact")
-setwd("~/GitHub/congressImpact/data")
-library(dplyr)#
-lm_eqn = function(m) {#
-    l <- list(a = format(coef(m)[1], digits = 2),#
-    b = format(abs(coef(m)[2]), digits = 2),#
-    r2 = format(summary(m)$r.squared, digits = 3));#
-    eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2,l)#
-    as.character(as.expression(eq));#
-}#
+setwd("~/GitHub/congressImpact")
 #allzips <- readRDS("data/superzip.rds")#
 superzip <- read.csv(file="data/superzip.csv")#
 zipcodes <- read.csv(file="data/zip_codes_states.csv")#
-#
-allzips <- merge(x=superzip, y=zipcodes, by.x="zipcode", by.y="zip_code")
-setwd("~/GitHub/congressImpact/")
-library(dplyr)#
-lm_eqn = function(m) {#
-    l <- list(a = format(coef(m)[1], digits = 2),#
-    b = format(abs(coef(m)[2]), digits = 2),#
-    r2 = format(summary(m)$r.squared, digits = 3));#
-    eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2,l)#
-    as.character(as.expression(eq));#
-}#
-#allzips <- readRDS("data/superzip.rds")#
-superzip <- read.csv(file="data/superzip.csv")#
-zipcodes <- read.csv(file="data/zip_codes_states.csv")#
-#
-allzips <- merge(x=superzip, y=zipcodes, by.x="zipcode", by.y="zip_code")
-ls(allzips)
-library(shiny)
-runApp("~/GitHub/congressImpact")
-runApp("~/GitHub/congressImpact")
-runApp("~/GitHub/congressImpact")
-runApp("~/GitHub/congressImpact")
-ls(superzip)
-runApp("~/GitHub/congressImpact")
-superzip <- read.csv(file="data/superzip.csv")#
-zipcodes <- read.csv(file="data/zip_codes_states.csv")#
-congresscontact <- read.csv(file="data/CongressionalContact.csv")#
-healthcaredata <- read.csv(file="data/Healthcare.csv")#
-cities <- read.csv(file="data/Municipalities.csv")#
-unemployment <- read.csv(file="data/Unemployment.csv")
-ls(unemsuperzip <- read.csv(file="data/superzip.csv")#
-)
-superzip <- read.csv(file="data/superzip.csv")
-ls(unemployment)
-allzips.first <- merge(x=superzip, y=zipcodes, by.x="zipcode", by.y="zip_code")
-ls(allzips.first)
-allzips.second <- merge(x=allzips.first, y=unemployment, by.x="zipcode", by.y="Zip")
-ls(allzips.second)
-ls(helathcaredata)
-ls(healthcaredata)
-head(healthcaredata$ZCTA)
-head(healthcaredata$Id)
-#allzips <- readRDS("data/superzip.rds")#
-superzip <- read.csv(file="data/superzip.csv")#
-zipcodes <- read.csv(file="data/zip_codes_states.csv")#
-congresscontact <- read.csv(file="data/CongressionalContact.csv")#
-healthcaredata <- read.csv(file="data/Healthcare.csv")#
-cities <- read.csv(file="data/Municipalities.csv")#
-unemployment <- read.csv(file="data/Unemployment.csv")
-head(healthcaredata$Id)
-allzips <- merge(x=allzips, y=healthcaredata, by.x="zipcode", by.y="Id")
-ls(allzips)
-ls(cities)
-allzips <- merge(x=allzips, y=cities, by.x="zipcode", by.y="zipcode")
-ls(allzips)
-#allzips <- readRDS("data/superzip.rds")#
-superzip <- read.csv(file="data/superzip.csv")#
-zipcodes <- read.csv(file="data/zip_codes_states.csv")#
-congresscontact <- read.csv(file="data/CongressionalContact.csv")#
 healthcaredata <- read.csv(file="data/Healthcare.csv")#
 cities <- read.csv(file="data/Municipalities.csv")#
 unemployment <- read.csv(file="data/Unemployment.csv")#
-#
+congresscontact <- read.csv(file="data/CongressionalContact.csv")#
+congresselections <- read.csv(file="/Users/lee/GitHub/congressImpact/data/CongressElections.csv")
+zipcongress <- read.csv(file="/Users/lee/GitHub/congressImpact/data/ZipCongress.csv")#
+statecode <- read.csv(file="/Users/lee/GitHub/congressImpact/data/StateCode.csv")
+test <- merge(zipcongress, statecode, by.x="State", by.y="STATE")
+head(test)
+write.table(test, file="test", sep=",")
+write.table(test, file="test.csv", sep=",")
+zipcongress <- read.csv(file="/Users/lee/GitHub/congressImpact/data/ZipCongress.csv")
 allzips <- merge(x=superzip, y=zipcodes, by.x="zipcode", by.y="zip_code")#
 allzips <- merge(x=allzips, y=unemployment, by.x="zipcode", by.y="Zip")#
-allzips <- merge(x=allzips, y=healthcaredata, by.x="zipcode", by.y="Id")#
-allzips <- merge(x=allzips, y=cities, by.x="zipcode", by.y="zipcode")
-ls(allzips)
-ls(congresscontact)
-head(allzips$districtcode)
-allzips <- merge(x=allzips, y=congresscontact, by.x="districtcode", by.y="districtcode")
-head(congresscontact$district)
-head(congresscontact$district)
-allzips <- merge(x=allzips, y=congresscontact, by.x="districtcode", by.y="districtwide")
-ls(allzips)
-congresselections <- read.csv(file="/Users/lee/GitHub/congressImpact/data/CongressElections.csv")
-head(congresselections)
-allzips <- merge(x=allzips, y=congresselections, by.x="districtcode", by.y="districtwide")
-allzips <- merge(x=allzips, y=congresselections, by.x="districtcode", by.y="districtcode")
+allzips <- merge(x=allzips, y=healthcaredata, by.x="zipcode", by.y="Id")
+allzips <- merge(x=allzips, y=zipcongress, by.x="zipcode", by.y="ZCTA")
 head(allzips)
-runApp("~/GitHub/congressImpact)"
-)
-runApp("~/GitHub/congressImpact
-)
+allzips <- merge(x=allzips, y=congresscontact, by.x="districtcode", by.y="districtwide")#
+allzips <- merge(x=allzips, y=congresselections, by.x="districtcode", by.y="districtcode")
+library(shiny)
 runApp("~/GitHub/congressImpact")
-deployApp("~/GitHub/congressImpact", appName="congressImpact")
+unique(allzips$districtcode)
+unique(zipcongress$districtcode)
+runApp("~/GitHub/congressImpact")
+runApp("~/GitHub/congressImpact")
+runApp("~/GitHub/congressImpact")
+runApp("~/GitHub/congressImpact")
 library(rsconnect)
 deployApp("~/GitHub/congressImpact", appName="congressImpact")
-runApp("~/GitHub/congressImpact")
-unique(congresscontact$districtcode)
-unique(congresscontact$districtwide)
-unique(cities$districtcode)
+deployApp("~/GitHub/congressImpact", appName="congressImpact")
+deployApp("~/GitHub/congressImpact", appName="congressImpact")
+runGitHub(""leedrake5/congressImpact")
+runGitHub("leedrake5/congressImpact")

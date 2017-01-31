@@ -1,7 +1,7 @@
 library(leaflet)
 
 # Choices for drop-downs
-vars <- c(
+varsColor <- c(
   "Is SuperZIP?" = "superzip",
   "Centile score" = "centile",
   "College education" = "college",
@@ -17,7 +17,27 @@ vars <- c(
   "Asian %" = "X2010.Asian",
   "Native American %" = "X2010.Native",
   "Trump Voter %" = "X2016.President.Trump.percent",
+  "Congress Republican Voter % "= "X2016.House.Rep.percent",
+  "Congress Democrat Voter % "= "X2016.House.Dem.percent",
   "Population" = "adultpop"
+)
+
+varsSize <- c(
+"Is SuperZIP?" = "superzip",
+"Centile score" = "centile",
+"College education" = "college",
+"Median income" = "income",
+"Unemployment Rate" = "unemployment",
+"Public Coverage" = "pubcov",
+"Medicare Coverage" = "medicare",
+"Medicaid ACA Coverage" = "medicaidexpansion",
+"VA Coverage" = "va",
+"White %" = "X2010.White",
+"Hispanic %" = "X2010.Hispanic",
+"Black %" = "X2010.Black",
+"Asian %" = "X2010.Asian",
+"Native American %" = "X2010.Native",
+"Population" = "adultpop"
 )
 
 
@@ -50,8 +70,8 @@ navbarPage("Congressional Impact", id="nav",
 
         tags$hr(),
 
-        selectInput("color", "Color", vars, selected="medicaidexpansion"),
-        selectInput("size", "Size", vars, selected = "adultpop"),
+        selectInput("color", "Color", varsColor, selected="medicaidexpansion"),
+        selectInput("size", "Size", varsSize, selected = "adultpop"),
         conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
           # Only prompt for threshold when coloring or sizing by superzip
           numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
