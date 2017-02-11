@@ -23,21 +23,21 @@ varsColor <- c(
 )
 
 varsSize <- c(
-"Is SuperZIP?" = "superzip",
-"Centile score" = "centile",
-"College education" = "college",
-"Median income" = "income",
-"Unemployment Rate" = "unemployment",
-"Public Coverage" = "pubcov",
-"Medicare Coverage" = "medicare",
-"Medicaid ACA Coverage" = "medicaidexpansion",
-"VA Coverage" = "va",
-"White %" = "X2010.White",
-"Hispanic %" = "X2010.Hispanic",
-"Black %" = "X2010.Black",
-"Asian %" = "X2010.Asian",
-"Native American %" = "X2010.Native",
-"Population" = "adultpop"
+  "Is SuperZIP?" = "superzip",
+  "Centile score" = "centile",
+  "College education" = "college",
+  "Median income" = "income",
+  "Unemployment Rate" = "unemployment",
+  "Public Coverage" = "pubcov",
+  "Medicare Coverage" = "medicare",
+  "Medicaid ACA Coverage" = "medicaidexpansion",
+  "VA Coverage" = "va",
+  "White %" = "X2010.White",
+  "Hispanic %" = "X2010.Hispanic",
+  "Black %" = "X2010.Black",
+  "Asian %" = "X2010.Asian",
+  "Native American %" = "X2010.Native",
+  "Population" = "adultpop"
 )
 
 

@@ -5,6 +5,7 @@ library(lattice)
 library(dplyr)
 library(ggplot2)
 library(data.table)
+library(DT)
 
 function(input, output, session) {
     
@@ -494,7 +495,7 @@ function(input, output, session) {
       
       
       cleantable <- superZipInBoundsCollapse %>%
-      select(
+      dplyr::select(
       District = districtcode,
       Representative = representative,
       Party=party,
@@ -515,6 +516,7 @@ function(input, output, session) {
       
       df <- unique(cleantable)
       
+      df
       
   })
   
